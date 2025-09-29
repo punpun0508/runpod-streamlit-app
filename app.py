@@ -5,7 +5,10 @@ import requests
 
 def stream_chat_response(
     query: str,
-    api_url: str = f"https://{st.secrets["RUNPOD_ID"]}.api.runpod.ai/api/v1/ask"
+    api_url: str = (
+        f"https://{st.secrets["RUNPOD_ID"]}"
+        ".api.runpod.ai/api/v1/ask"
+    )
 ):
     query = query.strip()
     try:
@@ -17,6 +20,11 @@ def stream_chat_response(
 Bạn là một trợ lí Tiếng Việt nhiệt tình và trung thực. \
 Hãy luôn trả lời một cách hữu ích nhất có thể.<|im_end|>
 <|im_start|>user
+Chú ý các yêu cầu sau:
+- Nếu câu hỏi là một lời chào hay tạm biệt, hãy đáp lại lời \
+chào hỏi một cách phù hợp.
+- Hãy trả lời câu hỏi một cách ngắn gọn súc tích.
+
 ### Câu hỏi :
 {query}
 
