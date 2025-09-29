@@ -89,8 +89,9 @@ def stream_upload_response(
                 except json.JSONDecodeError:
                     continue  # Skip malformed JSON
     except requests.exceptions.RequestException as e:
-        st.error(f"Error connecting to API: {e}")
-        return
+        return {
+            "generation_error" : f"Error connecting to API: {e}"
+        }
 
 
 # Initialize questions history
@@ -148,24 +149,32 @@ with tab1:
                     full_response: str = ""
                     status: str = ""
                     # Stream the response
-                    for event in stream_chat_response(prompt):
-                        if event["type"] == "source":
-                            source = event["data"]
-                        elif event["type"] == "status":
-                            status = event["data"]
-                            status_placeholder.markdown(event["data"])
-                        elif event["type"] == "retrieval_error":
-                            status_placeholder.markdown(event["data"])
-                            message_placeholder.markdown("Server Error")
-                        elif event["type"] == "generation_error":
-                            status_placeholder.markdown(event["data"])
-                            message_placeholder.markdown("Server Error")
-                        elif event["type"] == "answer_part":
-                            full_response += event["data"]
-                            message_placeholder.markdown(full_response + "▌")
-                        elif event["type"] == "done":
-                            message_placeholder.markdown(full_response)
-                            break
+                    try:
+                        for event in stream_chat_response(prompt):
+                            if event["type"] == "source":
+                                source = event["data"]
+                            elif event["type"] == "status":
+                                status = event["data"]
+                                status_placeholder.markdown(event["data"])
+                            elif event["type"] == "retrieval_error":
+                                status = "An error occured"
+                                status_placeholder.markdown(event["data"])
+                                message_placeholder.markdown("Server Error")
+                            elif event["type"] == "generation_error":
+                                status = "An error occured"
+                                status_placeholder.markdown(event["data"])
+                                message_placeholder.markdown("Server Error")
+                            elif event["type"] == "answer_part":
+                                full_response += event["data"]
+                                message_placeholder.markdown(full_response + "▌")
+                            elif event["type"] == "done":
+                                message_placeholder.markdown(full_response)
+                                break
+                    except Exception as e:
+                        status = "An error occured"
+                        status_placeholder.markdown("An error occured")
+                        full_response = f"Error: {e}"
+                        message_placeholder.markdown(full_response)
                 # Add assistant response to chat history
                 st.session_state.statuses.append(status)
                 st.session_state.replies.append(
