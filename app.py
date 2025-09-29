@@ -5,7 +5,7 @@ import requests
 
 def stream_chat_response(
     query: str,
-    api_url: str = f"https://{st.secrets["runpod_id"]}.api.runpod.ai/api/v1/ask"
+    api_url: str = f"https://{st.secrets["RUNPOD_ID"]}.api.runpod.ai/api/v1/ask"
 ):
     query = query.strip()
     try:
@@ -27,7 +27,7 @@ Hãy luôn trả lời một cách hữu ích nhất có thể.<|im_end|>
             headers={
             'Accept': 'text/event-stream',
             "Authorization": (
-                    f"Bearer {st.secrets["runpod_api_key"]}"
+                    f"Bearer {st.secrets["RUNPOD_API_KEY"]}"
                 )
             },
             stream=True
