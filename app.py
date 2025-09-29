@@ -58,8 +58,9 @@ chào hỏi một cách phù hợp.
                 except json.JSONDecodeError:
                     continue  # Skip malformed JSON
     except requests.exceptions.RequestException as e:
-        st.error(f"Error connecting to API: {e}")
-        return
+        return {
+            "generation_error": f"Error connecting to API: {e}"
+        }
 
 
 def stream_upload_response(
@@ -89,9 +90,8 @@ def stream_upload_response(
                 except json.JSONDecodeError:
                     continue  # Skip malformed JSON
     except requests.exceptions.RequestException as e:
-        return {
-            "generation_error" : f"Error connecting to API: {e}"
-        }
+        st.error(f"Error connecting to API: {e}")
+        return
 
 
 # Initialize questions history
@@ -166,7 +166,9 @@ with tab1:
                                 message_placeholder.markdown("Server Error")
                             elif event["type"] == "answer_part":
                                 full_response += event["data"]
-                                message_placeholder.markdown(full_response + "▌")
+                                message_placeholder.markdown(
+                                    full_response + "▌"
+                                )
                             elif event["type"] == "done":
                                 message_placeholder.markdown(full_response)
                                 break
