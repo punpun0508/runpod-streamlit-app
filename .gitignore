@@ -4,6 +4,7 @@ create_vllm_quant.py
 **/test_backend/
 **/venv/
 **/.venv/
+**/.streamlit/
 **/__pycache__/
 **/vllm_backend/language_model/*
 **/minio/minio_data/*
