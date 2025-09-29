@@ -5,13 +5,31 @@ import requests
 
 def stream_chat_response(
     query: str,
-    api_url: str = 'http://localhost:8000/api/v1/ask'
+    api_url: str = f"https://{st.secrets["runpod_id"]}.api.runpod.ai/api/v1/ask"
 ):
+    query = query.strip()
     try:
         response = requests.post(
             url=api_url,
-            json={'question': query},
-            headers={'Accept': 'text/event-stream'},
+            json={
+                "question": f"""\
+<|im_start|>system
+Bạn là một trợ lí Tiếng Việt nhiệt tình và trung thực. \
+Hãy luôn trả lời một cách hữu ích nhất có thể.<|im_end|>
+<|im_start|>user
+### Câu hỏi :
+{query}
+
+### Trả lời :<|im_end|>
+<|im_start|>assistant
+"""
+            },
+            headers={
+            'Accept': 'text/event-stream',
+            "Authorization": (
+                    f"Bearer {st.secrets["runpod_api_key"]}"
+                )
+            },
             stream=True
         )
         response.raise_for_status()
@@ -79,7 +97,7 @@ if 'sources' not in st.session_state:
 if 'statuses' not in st.session_state:
     st.session_state.statuses = []
 
-st.title('Runpod VLLM Chatbot')
+st.title('Runpod VLLM Chatbot Test')
 tab1, tab2 = st.tabs(['Chat', 'Upload'])
 
 with tab1:
